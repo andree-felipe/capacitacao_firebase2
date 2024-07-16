@@ -49,7 +49,12 @@ class AuthFirebaseService implements AuthService {
   }
 
   // ignore: annotate_overrides
-  Future<void> login(String email, String password) async {}
+  Future<void> login(String email, String password) async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
 
   // ignore: annotate_overrides
   Future<void> logout() async {
