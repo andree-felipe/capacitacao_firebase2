@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 
 class LoadingPage extends StatelessWidget {
@@ -5,14 +7,14 @@ class LoadingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.purple,
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             RefreshProgressIndicator(
-              color: Colors.purple,
+              color: Theme.of(context).colorScheme.primary,
             ),
             SizedBox(height: 10),
             Text(
