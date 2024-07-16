@@ -1,6 +1,4 @@
 import 'dart:io';
-
-
 import '../../models/app_user.dart';
 import 'auth_mock_service.dart';
 
