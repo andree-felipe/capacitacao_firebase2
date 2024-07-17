@@ -1,6 +1,9 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, avoid_unnecessary_containers
 
+import 'package:capacitacao_firebase2/core/services/notification/task_notification_service.dart';
+import 'package:capacitacao_firebase2/pages/notification_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../components/new_task.dart';
 import '../components/tasks_list.dart';
 import '../core/services/auth/auth_service.dart';
@@ -25,31 +28,64 @@ class TasksPage extends StatelessWidget {
           //   ),
           //   onPressed: () => _openTaskFormModal(context),
           // ),
-          DropdownButton(
-            icon: const Icon(
-              Icons.more_vert,
-              color: Colors.white,
+          DropdownButtonHideUnderline(
+            child: DropdownButton(
+              icon: const Icon(
+                Icons.more_vert,
+                color: Colors.white,
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: 'logout',
+                  child: Container(
+                    child: Row(
+                      children: [
+                        Icon(Icons.exit_to_app),
+                        SizedBox(width: 10),
+                        Text('Sair'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              onChanged: (value) {
+                if (value == 'logout') {
+                  AuthService().logout();
+                }
+              },
             ),
-            items: [
-              DropdownMenuItem(
-                value: 'logout',
-                child: Container(
-                  width: 3,
-                  child: Row(
-                    children: [
-                      Icon(Icons.exit_to_app),
-                      SizedBox(width: 10),
-                      Text('Sair'),
-                    ],
+          ),
+          Stack(
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (ctx) {
+                      return NotificationPage();
+                    }),
+                  );
+                },
+                icon: Icon(
+                  Icons.notifications,
+                  color: Colors.white,
+                ),
+              ),
+              Positioned(
+                top: 5,
+                right: 5,
+                child: CircleAvatar(
+                  maxRadius: 10,
+                  backgroundColor: Colors.deepPurple.shade200,
+                  child: Text(
+                    '${Provider.of<TaskNotificationService>(context).itemsCount}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
             ],
-            onChanged: (value) {
-              if (value == 'logout') {
-                AuthService().logout();
-              }
-            },
           ),
         ],
       ),

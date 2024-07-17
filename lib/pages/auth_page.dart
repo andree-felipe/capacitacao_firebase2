@@ -1,3 +1,5 @@
+// ignore_for_file: control_flow_in_finally
+
 import 'package:flutter/material.dart';
 
 import '../components/auth_form.dart';
@@ -16,6 +18,7 @@ class _AuthPageState extends State<AuthPage> {
   
   Future<void> _handleSubmit(AuthFormData formData) async {
     try {
+      if(!mounted) return;
       setState(() => _isLoading = true);
 
       if(formData.isLogin) {
@@ -30,6 +33,7 @@ class _AuthPageState extends State<AuthPage> {
       // Tratar Erro
     }
     finally {
+      if(!mounted) return;
       setState(() => _isLoading = false);
     }
   }
