@@ -1,7 +1,9 @@
-// ignore_for_file: prefer_const_constructors, unused_field
+// ignore_for_file: prefer_const_constructors, unused_field, annotate_overrides
 
 import 'dart:async';
 import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 
 import '../../models/app_user.dart';
 import 'auth_service.dart';
@@ -19,17 +21,14 @@ class AuthFirebaseService implements AuthService {
     }
   });
 
-  // ignore: annotate_overrides
   AppUser? get currentUser {
     return _currentUser;
   }
 
-  // ignore: annotate_overrides
   Stream<AppUser?> get userChanges {
     return _userStream;
   }
 
-  // ignore: annotate_overrides
   Future<void> signup(
     String name,
     String email,
@@ -44,11 +43,17 @@ class AuthFirebaseService implements AuthService {
 
     if (credential.user != null) return;
 
+    // Upload da foto do usuário
+    final imageName = '${credential.user!.uid}.jpg';
+    final imageUrl = await _uploadUserImage(image, imageName);
+
+    // Atualizar atributos do usuário
     credential.user?.updateDisplayName(name);
-    // credential.user?.updatePhotoURL(photoURL);
+    credential.user?.updatePhotoURL(imageUrl);
+
+    // Salvar usuário no banco de dados
   }
 
-  // ignore: annotate_overrides
   Future<void> login(String email, String password) async {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
@@ -56,9 +61,18 @@ class AuthFirebaseService implements AuthService {
     );
   }
 
-  // ignore: annotate_overrides
   Future<void> logout() async {
     FirebaseAuth.instance.signOut();
+  }
+
+  Future<String?> _uploadUserImage(File? image, String imageName) async {
+    if(image == null) return null;
+
+    final storage = FirebaseStorage.instance;
+    final imageRef = storage.ref().child('user_images').child(imageName);
+
+    await imageRef.putFile(image).whenComplete(() {});
+    return await imageRef.getDownloadURL();
   }
 
   static AppUser _toAppUser(User user) {
