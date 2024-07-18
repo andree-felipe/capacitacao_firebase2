@@ -21,13 +21,6 @@ class TasksPage extends StatelessWidget {
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         actions: <Widget>[
-          // IconButton(
-          //   icon: const Icon(
-          //     Icons.add,
-          //     color: Colors.white,
-          //   ),
-          //   onPressed: () => _openTaskFormModal(context),
-          // ),
           DropdownButtonHideUnderline(
             child: DropdownButton(
               icon: const Icon(
