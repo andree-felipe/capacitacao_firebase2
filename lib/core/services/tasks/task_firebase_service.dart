@@ -19,6 +19,7 @@ class TaskFirebaseService implements TaskService {
           fromFirestore: _fromFirestore,
           toFirestore: _toFirestore,
         )
+        .orderBy('deliveryDate')
         .snapshots();
 
     return snapshots.map((snapshot) {
