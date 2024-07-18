@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import '../../models/app_user.dart';
@@ -41,17 +42,18 @@ class AuthFirebaseService implements AuthService {
       password: password,
     );
 
-    if (credential.user != null) return;
+    if (credential.user == null) return;
 
     // Upload da foto do usuário
     final imageName = '${credential.user!.uid}.jpg';
-    final imageUrl = await _uploadUserImage(image, imageName);
+    final imageURL = await _uploadUserImage(image, imageName);
 
     // Atualizar atributos do usuário
-    credential.user?.updateDisplayName(name);
-    credential.user?.updatePhotoURL(imageUrl);
+    await credential.user?.updateDisplayName(name);
+    await credential.user?.updatePhotoURL(imageURL);
 
     // Salvar usuário no banco de dados
+    await _saveAppUser(_toAppUser(credential.user!, imageURL));
   }
 
   Future<void> login(String email, String password) async {
@@ -75,12 +77,23 @@ class AuthFirebaseService implements AuthService {
     return await imageRef.getDownloadURL();
   }
 
-  static AppUser _toAppUser(User user) {
+  Future<void> _saveAppUser(AppUser user) async {
+    final store = FirebaseFirestore.instance;
+    final docRef = store.collection('users').doc(user.id);
+
+    return docRef.set({
+      'name': user.name,
+      'email': user.email,
+      'imageURL': user.imageURL,
+    });
+  }
+
+  static AppUser _toAppUser(User user, [String? imageURL]) {
     return AppUser(
       id: user.uid,
       name: user.displayName ?? user.email!.split('@')[0],
       email: user.email!,
-      imageURL: user.photoURL ?? 'assets/images/avatar.png',
+      imageURL: imageURL ?? user.photoURL ?? 'assets/images/avatar.png',
     );
   }
 }
