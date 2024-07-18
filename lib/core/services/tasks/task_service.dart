@@ -1,14 +1,14 @@
 
 import '../../models/task.dart';
-import 'task_mock_service.dart';
+import 'task_firebase_service.dart';
 
 abstract class TaskService {
   Stream<List<Task>> tasksStream();
-  Future<Task> save(String title, DateTime deliveryDate);
+  Future<Task?> save(String title, DateTime deliveryDate);
 
-  removeTask(String id);
+  // removeTask(String id);
 
   factory TaskService() {
-    return TaskMockService();
+    return TaskFirebaseService();
   }
 }
