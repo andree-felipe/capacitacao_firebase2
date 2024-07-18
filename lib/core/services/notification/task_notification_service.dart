@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/task_notification.dart';
@@ -22,5 +23,24 @@ class TaskNotificationService with ChangeNotifier {
   void remove(int i) {
     _items.removeAt(i);
     notifyListeners();
+  }
+
+  Future<void> init() async {}
+
+  Future<bool> get _isAutorized async {
+    final messaging = FirebaseMessaging.instance;
+    final settings = await messaging.requestPermission();
+    return settings.authorizationStatus == AuthorizationStatus.authorized;
+  }
+
+  Future<void> _configureForeground() async {
+    if (await _isAutorized) {
+      FirebaseMessaging.onMessage.listen((msg) {
+        add(TaskNotification(
+          title: msg.notification!.title ?? 'Não informado',
+          body: msg.notification!.body ?? 'Não informado',
+        ));
+      });
+    }
   }
 }
