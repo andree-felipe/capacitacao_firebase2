@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../core/models/task.dart';
+import '../core/services/tasks/task_service.dart';
 // import '../core/services/tasks/task_service.dart';
 
 // Arquivo que implementa a estrutura base de um Card de uma Task
@@ -44,8 +45,7 @@ class TaskCard extends StatelessWidget {
               ),
             ),
             // Função de conclusão de uma task do botão
-            onPressed: () {},
-            // onPressed: () => TaskService().removeTask(task.id),
+            onPressed: () => TaskService().removeTask(task.id),
             child: Text(''),
           ),
         ),
@@ -58,7 +58,7 @@ class TaskCard extends StatelessWidget {
         
         // Data de entrega da task
         subtitle: Text(
-          DateFormat('d MMM y').format(task.deliveryDate),
+          'Entrega: ${DateFormat('d MMM y').format(task.deliveryDate)}',
         ),
       ),
     );

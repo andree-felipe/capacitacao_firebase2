@@ -6,7 +6,7 @@ abstract class TaskService {
   Stream<List<Task>> tasksStream();
   Future<Task?> save(String title, DateTime deliveryDate);
 
-  // removeTask(String id);
+  removeTask(String paramId);
 
   factory TaskService() {
     return TaskFirebaseService();

@@ -9,14 +9,43 @@ import '../../models/task.dart';
 import 'task_service.dart';
 
 class TaskFirebaseService implements TaskService {
+  @override
   Stream<List<Task>> tasksStream() {
-    return Stream<List<Task>>.empty();
+    final store = FirebaseFirestore.instance;
+
+    final snapshots = store
+        .collection('tasks')
+        .withConverter(
+          fromFirestore: _fromFirestore,
+          toFirestore: _toFirestore,
+        )
+        .snapshots();
+
+    return snapshots.map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return doc.data();
+      }).toList();
+    });
+
+    // return Stream<List<Task>>.multi((controller) {
+    //   snapshots.listen((snapshot) {
+    //     List<Task> lista = snapshot.docs.map((doc) {
+    //       return doc.data();
+    //     }).toList();
+    //     controller.add(lista);
+    //   });
+    // });
   }
 
-  // removeTask(String id) {
-  //   _tasks.removeWhere((task) => task.id == id);
-  //   _controller?.add(_tasks);
-  // }
+  Future<void> removeTask(String paramId) async {
+    // _tasks.removeWhere((task) => task.id == id);
+    // _controller?.add(_tasks);
+
+    final store = FirebaseFirestore.instance;
+    final taskToRemove = store.collection('tasks').doc(paramId);
+
+    await taskToRemove.delete();
+  }
 
   Future<Task?> save(String title, DateTime deliveryDate) async {
     final store = FirebaseFirestore.instance;
@@ -36,7 +65,7 @@ class TaskFirebaseService implements TaskService {
         .add(task);
 
     final doc = await docRef.get();
-    return doc.data();
+    return doc.data()!;
   }
 
   // Task => Map<String, dynamic>
